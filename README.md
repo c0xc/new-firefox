@@ -38,6 +38,50 @@ Just copy this thing into your local ~/bin directory
 and drop the suffix.
 Then, when starting Firefox (hit Alt + F2 or whatever), enter "new-firefox".
 
+Firefox will show a dialog informing you that it's being started in safe mode.
+So it'll be obvious that this is a separate Firefox session.
+
+
+
+Cleanup
+-------
+
+Normally, this tool will create a temporary profile
+and delete that profile when Firefox is closed.
+However, this tool might fail to do so due to a bug or a crash.
+In such a case, the temporary profile should be deleted manually.
+
+Navigate to $HOME/.mozilla/firefox/.
+Look for directories named "tempX.profile", where X is a number.
+These are temporary profile directories.
+You can safely delete those, once all Firefox sessions are closed.
+Don't delete any other files or directories.
+
+Then, open the file called profiles.ini and look for config sections
+that have a "Path" key which points to a "tempX.profile" directory.
+Remove these sections. Keep the other sections as they are.
+
+
+
+Gory details
+------------
+
+This tool creates a temporary profile directory in $HOME/.mozilla/firefox/.
+The directory is always named "tempX.profile", where X is a positive integer.
+X is the directory number, which isn't really an index but rather a number
+used to form a unique directory name.
+Also, a profile section for this temporary profile is added to the config file
+called profiles.ini.
+Each section name contains a number, which is the section index.
+When one or more temporary sessions are created, their section indexes
+and directory numbers usually match.
+As soon as a session is closed while sessions with higher indexes
+are still running, their section indexes will be decreased.
+Failure to do so would lead to a gap in the profile section array,
+which in turn would cause Firefox to show the profile chooser dialog.
+When closed, this profile chooser may reset the config file
+by removing all temporary profile sections.
+
 
 
 Author
