@@ -134,15 +134,6 @@ fi
 echo "Deleting profile config section (#$new_profile_index)..."
 sed -i '/Profile'$new_profile_index'/,/^\s*$/{d}' "$profile_file"
 
-# Delete profile directory
-if [ ! -f "$new_dir/prefs.js" ]; then
-    # Don't delete it if it doesn't look like a profile directory
-    echo "Not deleting, dir doesn't look right, no prefs.js" >&2
-    exit 1
-fi
-echo "Deleting profile directory ($new_name)..."
-rm -rfv "$new_dir" >/dev/null
-
 # Decrement following section indexes to not break config
 # Config might be invalid at this point (section #1 removed, #2 still there)
 next_index=$((new_profile_index+1))
@@ -160,6 +151,15 @@ while grep -q '\[Profile'$((next_index))'\]' "$profile_file"; do
     fi
     ((next_index++))
 done
+
+# Delete profile directory
+if [ ! -f "$new_dir/prefs.js" ]; then
+    # Don't delete it if it doesn't look like a profile directory
+    echo "Not deleting, dir doesn't look right, no prefs.js" >&2
+    exit 1
+fi
+echo "Deleting profile directory ($new_name)..."
+rm -rfv "$new_dir" >/dev/null
 
 # Done
 echo "Done"
